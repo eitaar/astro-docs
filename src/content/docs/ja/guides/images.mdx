@@ -10,8 +10,8 @@ import { Steps } from '@astrojs/starlight/components'
 import ReadMore from '~/components/ReadMore.astro';
 
 Astroでは、画像がプロジェクト内にローカルで保存されているか、外部URLからリンクされているか、CMSやCDN上で管理されているかに関係なく、サイト上で画像を扱うための複数の方法を提供しています。
-{/* fix */}
-Astroでは、組み込みの[`<Image />`](#image-)コンポーネントと[`<Picture />`](#picture-)コンポーネント、[Markdown画像構文](#images-in-markdown-files)(`![]（）`)の処理、[SVGコンポーネント](#svg-components)、および[画像生成関数](#generating-images-with-getimage)を使用して、画像の最適化や変換をおこなえます。また、デフォルトで[レスポンシブ画像の自動リサイズ](#responsive-image-behavior)を設定したり、個々のimageコンポーネントやpictureコンポーネントにレスポンシブプロパティを指定したりすることもできます。
+
+Astroでは、組み込みの[`<Image />`](#image-)コンポーネントと[`<Picture />`](#picture-)コンポーネント、[Markdown画像構文](#images-in-markdown-files)(`![]()`)の処理、[SVGコンポーネント](#svg-components)、および[画像生成関数](#generating-images-with-getimage)を使用して、画像の最適化や変換をおこなえます。また、デフォルトで[レスポンシブ画像の自動リサイズ](#responsive-image-behavior)を設定したり、個々のimageコンポーネントやpictureコンポーネントにレスポンシブプロパティを指定したりすることもできます。
 
 もちろん、標準的なHTMLを使用して`.astro`やMarkdownファイルに画像やSVGファイルを表示することも、ファイルの種類に応じた標準的な方法（MDXやJSXで`<img />`を使用するなど）で表示することも可能です。ただし、Astroはこれらの画像に対して処理や最適化を一切行いません。
 
@@ -31,6 +31,48 @@ Astroによる画像の変換、最適化、およびバンドル機能を活用
 
 ### リモート画像
 
-ローカルに保存する以外にも、[コンテンツ管理システム (CMS)](/ja/guides/cms/)や[デジタルアセット管理 (DAM)](/ja/guides/media/)プラットフォームなどを使用して外部に画像を保存できます。AstroではAPIを使用して外部からデータを取得したり、完全なURLを指定して画像を表示したりすることも可能です。
+ローカルに保存する以外にも、[コンテンツ管理システム(CMS)](/ja/guides/cms/)や[デジタルアセット管理(DAM)](/ja/guides/media/)プラットフォームなどを使用して外部に画像を保存できます。AstroではAPIを使用して外部からデータを取得したり、完全なURLを指定して画像を表示したりすることも可能です。
 
-外部ソースを扱う際の安全性を高めるため、Astroの画像コンポーネントおよびヘルパー関数は、設定で指定された承認済みの画像ソースからの画像のみを処理します。未承認のソースからインポートされた画像は処理されず、そのまま表示されます。
+外部ソースを扱う際の安全性を高めるため、Astroの画像コンポーネントおよびヘルパー関数は、[設定で指定された承認済みの画像ソース](#authorizing-remote-images)からの画像のみを処理します。未承認のソースからインポートされた画像は処理されず、そのまま表示されます。
+
+## `.astro`ファイル内の画像
+
+<p>
+
+**オプション:** `<Image />`, `<Picture />`, `<img>`, `<svg>`, SVGコンポーネント
+</p>
+
+Astroのテンプレート言語では、[`<Image />`](/ja/reference/modules/astro-assets/#image-)コンポーネントを使用して画像を最適化して表示したり、[`<Picture />`](/ja/reference/modules/astro-assets/#picture-)コンポーネントで異なるサイズやフォーマットの画像を生成したりできます。また、どちらのコンポーネントも、画面サイズや解像度に応じて画像サイズを調整する[レスポンシブ画像プロパティ](#responsive-image-behavior)をサポートしています。
+
+さらに、`.astro`コンポーネント内でSVGファイルをインポートし、[SVGファイルをAstroコンポーネントとして使用](#svg-components)することもできます。
+
+`<img>`や`<svg>`を含む標準的なHTMLタグを使用して、`.astro`ファイル内で画像を使用することもできます。ただし、[HTMLタグでレンダリングされた画像](#display-unprocessed-images-with-the-html-img-tag)は画像処理(変換、最適化など)が一切行われないまま、元の状態のままビルドフォルダにコピーされます。
+
+`.astro`ファイル内のすべての画像において、**画像の`src`属性の値は、画像ファイルの場所によって決まります**。
+
+- プロジェクトの`src/`フォルダに保存されている画像を使用する場合は、そのファイルの相対パスからインポートを行います。
+
+  ImageコンポーネントやPictureコンポーネントでは、インポートした変数名をそのまま渡します(例：`src={rocket}`)。一方、HTMLの`<img>`タグを使う場合は、オブジェクトのsrcプロパティを参照する必要があります(例：`src={rocket.src}`)。
+
+- リモート画像および`public/`フォルダ内の画像を表示する場合は、URLパスを使用します。
+
+  リモート画像を使用する場合は、完全なURLパス(例: `src="https://www.example.com/images/my-remote-image.jpg"`)を指定します。`public/`フォルダ内の画像を使用する場合は、その場所に対応する相対URLパスを指定できます(例: `public/images/my-public-image.jpg`にある画像の場合は`src="/images/my-public-image.jpg"`)。
+
+```astro title="src/pages/blog/my-images.astro"
+---
+import { Image } from 'astro:assets';
+import localBirdImage from '../../images/subfolder/localBirdImage.png';
+---
+<Image src={localBirdImage} alt="A bird sitting on a nest of eggs." />
+<Image src="/images/bird-in-public-folder.jpg" alt="A bird." width="50" height="50" />
+<Image src="https://example.com/remote-bird.jpg" alt="A bird." width="50" height="50" />
+
+<img src={localBirdImage.src} alt="A bird sitting on a nest of eggs.">
+<img src="/images/bird-in-public-folder.jpg" alt="A bird.">
+<img src="https://example.com/remote-bird.jpg" alt="A bird.">
+```
+
+<ReadMore>[`<Image />`](/ja/reference/modules/astro-assets/#image-)および[`<Picture />`](/ja/reference/modules/astro-assets/#picture-)コンポーネントのプロパティ（必須・オプション）については、完全なAPIリファレンスを確認してください。</ReadMore>
+
+<RecipeLinks slugs={["en/recipes/dynamically-importing-images" ]}/>
+
