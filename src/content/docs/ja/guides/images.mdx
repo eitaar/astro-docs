@@ -1,5 +1,5 @@
 ---
-title: 画像コンポーネント
+title: 画像
 description: Astroで画像を使用する方法について学びます。
 i18nReady: true
 ---
@@ -11,10 +11,20 @@ import ReadMore from '~/components/ReadMore.astro';
 
 Astroでは、画像がプロジェクト内にローカルで保存されているか、外部URLからリンクされているか、CMSやCDN上で管理されているかに関係なく、サイト上で画像を扱うための複数の方法を提供しています。
 {/* fix */}
-Astroでは、組み込みの[`<Image />`](#image-)コンポーネントと[`<Picture />`](#picture-)コンポーネント、[Markdown画像構文](#images-in-markdown-files)（`![]（）`）の処理、[SVGコンポーネント](#svg-components)、および[画像生成関数](#generating-images-with-getimage)を使用して、画像の最適化や変換をおこなえます。また、デフォルトで[レスポンシブ画像の自動リサイズ](#responsive-image-behavior)を設定したり、個々のimageコンポーネントやpictureコンポーネントにレスポンシブプロパティを指定したりすることもできます。
+Astroでは、組み込みの[`<Image />`](#image-)コンポーネントと[`<Picture />`](#picture-)コンポーネント、[Markdown画像構文](#images-in-markdown-files)(`![]（）`)の処理、[SVGコンポーネント](#svg-components)、および[画像生成関数](#generating-images-with-getimage)を使用して、画像の最適化や変換をおこなえます。また、デフォルトで[レスポンシブ画像の自動リサイズ](#responsive-image-behavior)を設定したり、個々のimageコンポーネントやpictureコンポーネントにレスポンシブプロパティを指定したりすることもできます。
 
 もちろん、標準的なHTMLを使用して`.astro`やMarkdownファイルに画像やSVGファイルを表示することも、ファイルの種類に応じた標準的な方法（MDXやJSXで`<img />`を使用するなど）で表示することも可能です。ただし、Astroはこれらの画像に対して処理や最適化を一切行いません。
 
-また、Astroにはネイティブな動画サポートがありません。そのため、最適化やストリーミングといった要件に対応するために[動画ホスティングサービス](/ja/guides/media/)を利用することをお勧めします。
+また、Astroにはネイティブな動画サポートがありません。そのため、最適化やストリーミングといった要件に対応するために[動画ホスティングサービス](/ja/guides/media/)を利用することを推奨します。
 
-<ReadMore>[`<Image />`](/en/reference/modules/astro-assets/#image-)及び[`<Picture />`](/en/reference/modules/astro-assets/#picture-)コンポーネントの完全なAPIリファレンスを確認してください</ReadMore>
+<ReadMore>[`<Image />`](/ja/reference/modules/astro-assets/#image-)および[`<Picture />`](/ja/reference/modules/astro-assets/#picture-)コンポーネントの完全なAPIリファレンスを確認してください。</ReadMore>
+
+## 画像の保存場所
+
+### `src/` vs `public/`
+
+Astroによる画像の変換、最適化、およびバンドル機能を活用するため、ローカル画像は可能な限り`src/`内に保存することを推奨します。`public/`内に保存されたファイルは、処理されることなく配信されるか、ビルドフォルダにコピーされます。
+
+`src/`内に保存された画像ファイルは、`.astro`、`.md`、`.mdx`、`.mdoc`、およびその他のUIフレームワークのコンポーネントを含む、プロジェクト内のすべてのファイルで通常のファイルインポートと同じように使用できます。画像はコンテンツと同じフォルダ内を含む、任意のフォルダに保存できます。
+
+画像に処理を加えたくない場合は、画像を`public/`フォルダ内に保存してください。このフォルダ内に保存された画像は、ドメイン上のURLパスとしてプロジェクト内のファイルから参照できるほか、画像に直接アクセス可能な公開URLとしても機能します。例えば、faviconはブラウザが正しく認識できるよう、通常は`public/`直下に配置されます。
