@@ -13,7 +13,7 @@ Astroでは、画像がプロジェクト内にローカルで保存されてい
 
 Astroでは、組み込みの[`<Image />`](#image-)コンポーネントと[`<Picture />`](#picture-)コンポーネント、[Markdown画像構文](#images-in-markdown-files)(`![]()`)の処理、[SVGコンポーネント](#svg-components)、および[画像生成関数](#generating-images-with-getimage)を使用して、画像の最適化や変換をおこなえます。また、デフォルトで[レスポンシブ画像の自動リサイズ](#responsive-image-behavior)を設定したり、個々のimageコンポーネントやpictureコンポーネントにレスポンシブプロパティを指定したりすることもできます。
 
-もちろん、標準的なHTMLを使用して`.astro`やMarkdownファイルに画像やSVGファイルを表示することも、ファイルの種類に応じた標準的な方法（MDXやJSXで`<img />`を使用するなど）で表示することも可能です。ただし、Astroはこれらの画像に対して処理や最適化を一切行いません。
+もちろん、ネイティブなHTML要素を使用して`.astro`やMarkdownファイルに画像やSVGファイルを表示することも、ファイルの種類に応じた標準的な方法（MDXやJSXで`<img />`を使用するなど）で表示することも可能です。ただし、Astroはこれらの画像に対して処理や最適化を一切行いません。
 
 また、Astroにはネイティブな動画サポートがありません。そのため、最適化やストリーミングといった要件に対応するために[動画ホスティングサービス](/ja/guides/media/)を利用することを推奨します。
 
@@ -33,7 +33,7 @@ Astroによる画像の変換、最適化、およびバンドル機能を活用
 
 ローカルに保存する以外にも、[コンテンツ管理システム(CMS)](/ja/guides/cms/)や[デジタルアセット管理(DAM)](/ja/guides/media/)プラットフォームなどを使用して外部に画像を保存できます。AstroではAPIを使用して外部からデータを取得したり、完全なURLを指定して画像を表示したりすることも可能です。
 
-外部ソースを扱う際の安全性を高めるため、Astroの画像コンポーネントおよびヘルパー関数は、[設定で指定された承認済みの画像ソース](#authorizing-remote-images)からの画像のみを処理します。未承認のソースからインポートされた画像は処理されず、そのまま表示されます。
+外部ソースを扱う際の安全性を高めるため、Astroの画像コンポーネントおよびヘルパー関数は、[設定で指定された承認済みの画像ソース](#authorizing-remote-images)からの画像のみを処理(最適化や変換など)します。未承認のソースからインポートされた画像は処理されず、そのまま表示されます。
 
 ## `.astro`ファイル内の画像
 
@@ -42,11 +42,11 @@ Astroによる画像の変換、最適化、およびバンドル機能を活用
 **オプション:** `<Image />`, `<Picture />`, `<img>`, `<svg>`, SVGコンポーネント
 </p>
 
-Astroのテンプレート言語では、[`<Image />`](/ja/reference/modules/astro-assets/#image-)コンポーネントを使用して画像を最適化して表示したり、[`<Picture />`](/ja/reference/modules/astro-assets/#picture-)コンポーネントで異なるサイズやフォーマットの画像を生成したりできます。また、どちらのコンポーネントも、画面サイズや解像度に応じて画像サイズを調整する[レスポンシブ画像プロパティ](#responsive-image-behavior)をサポートしています。
+Astroのテンプレート言語では、[`<Image />`](/ja/reference/modules/astro-assets/#image-)コンポーネントを使用して画像を最適化して表示したり、[`<Picture />`](/ja/reference/modules/astro-assets/#picture-)コンポーネントで異なるサイズやフォーマットの画像を生成したりできます。また、どちらのコンポーネントも、コンテナのサイズに合わせたリサイズや、デバイスの画面サイズと解像度への対応をおこなう[レスポンシブ画像プロパティ](#responsive-image-behavior)をサポートしています。
 
 さらに、`.astro`コンポーネント内でSVGファイルをインポートし、[SVGファイルをAstroコンポーネントとして使用](#svg-components)することもできます。
 
-`<img>`や`<svg>`を含む標準的なHTMLタグを使用して、`.astro`ファイル内で画像を使用することもできます。ただし、[HTMLタグでレンダリングされた画像](#display-unprocessed-images-with-the-html-img-tag)は画像処理(変換、最適化など)が一切行われないまま、元の状態のままビルドフォルダにコピーされます。
+`<img>`や`<svg>`を含むネイティブなHTMLタグを使用して、`.astro`ファイル内で画像を使用することもできます。ただし、[HTMLタグでレンダリングされた画像](#display-unprocessed-images-with-the-html-img-tag)は画像処理(変換、最適化など)が一切行われないまま、元の状態のままビルドフォルダにコピーされます。
 
 `.astro`ファイル内のすべての画像において、**画像の`src`属性の値は、画像ファイルの場所によって決まります**。
 
@@ -96,7 +96,7 @@ import localBirdImage from '../../images/subfolder/localBirdImage.png';
 <!-- 相対ファイルパスまたはインポートエイリアスを使用してください -->
 ![満天の星空。](../assets/stars.png)
 
-<!-- public/images/に保存されているローカル画像 -->
+<!-- public/images/に保存されている画像 -->
 <!-- public/からの相対パスを使用してください -->
 ![満天の星空。](/images/stars.png)
 
@@ -108,3 +108,74 @@ import localBirdImage from '../../images/subfolder/localBirdImage.png';
 HTMLの`<img>`タグを使用して、`public/`ディレクトリや外部に保存されている画像を、処理や最適化を行わずにページに表示させることもできます。ただし、`src/`内のローカル画像の表示には対応していません。
 
 また、`<Image />`および`<Picture />`コンポーネントは`.md`ファイルでは利用できません。画像の属性を細かく制御する必要がある場合は、[AstroのMDXインテグレーション](/ja/guides/integrations-guide/mdx/)を使用して、`.mdx`形式をサポートすることをおすすめします。MDXを使用すると、AstroコンポーネントとMarkdown構文を組み合わせるなど、[MDXで利用可能な追加の画像オプション](#images-in-mdx-files)が使えるようになります。
+
+## MDXファイル内の画像
+
+<p>
+
+**オプション:** `<Image />`, `<Picture />`, `<img />`, `![]()`, SVGコンポーネント
+</p>
+
+Astroの`<Image />`および`<Picture />`コンポーネントは、`.mdx`ファイル内で画像とコンポーネントの両方をインポートすることで、[`.astro`ファイルと同様に](#images-in-astro-files)使用できます。また、未処理の画像を表示するためにJSXの`<img />`タグもサポートされており、[HTMLの`<img>`タグと同じ方法で](#display-unprocessed-images-with-the-html-img-tag)画像を扱うことができます。
+
+また、インポート不要で[標準的なMarkdownの`![alt](src)`構文](#images-in-markdown-files)もサポートされています。
+
+```mdx title="src/pages/post-1.mdx"
+---
+title: 私のページタイトル
+---
+import { Image } from 'astro:assets';
+import rocket from '../assets/rocket.png';
+
+# 私のMDXページ
+
+// 同じフォルダに保存されているローカル画像
+![野生のHouston](houston.png)
+
+// src/assets/に保存されているローカル画像
+<Image src={rocket} alt="宇宙を漂うロケット。" />
+<img src={rocket.src} alt="宇宙を漂うロケット。" />
+![宇宙を漂うロケット。](../assets/rocket.png)
+
+// public/images/に保存されている画像ファイル
+<Image src="/images/stars.png" alt="満天の星空。" />
+<img src="/images/stars.png" alt="満天の星空。" />
+![満天の星空。](/images/stars.png)
+
+// 外部サーバーに保存されている画像
+<Image src="https://example.com/images/remote-image.png" />
+<img src="https://example.com/images/remote-image.png" />
+![Astro](https://example.com/images/remote-image.png)
+
+```
+
+<ReadMore>[`<Image />`](/ja/reference/modules/astro-assets/#image-)および[`<Picture />`](/ja/reference/modules/astro-assets/#picture-)コンポーネントの完全なAPIリファレンスを確認してください。</ReadMore>
+
+## UIフレームワークのコンポーネント内で画像を使用する
+
+<p>
+
+**画像オプション:** フレームワーク独自の画像構文 (例:JSXの`<img />`、Svelteの`<img>`)
+</p>
+
+`src`などのローカル画像のプロパティにアクセスするには、まず最初に[ローカルの画像をインポート](/ja/reference/modules/astro-assets/#image-)する必要があります。インポートした後は、そのフレームワーク独自の構文を使って通常通り画像を表示できます。
+
+```jsx title="src/components/ReactImage.jsx"
+import stars from "../assets/stars.png";
+
+export default function ReactImage() {
+  return (
+    <img src={stars.src} alt="満天の星空。" />
+  )
+}
+```
+```svelte title="src/components/SvelteImage.svelte"
+<script>
+  import stars from '../assets/stars.png';
+</script>
+
+<img src={stars.src} alt="満天の星空。" />
+
+```
+
+Astroのコンポーネント(`<Image />`、`<Picture />`やSVGコンポーネントなど)は
