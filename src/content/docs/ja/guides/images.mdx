@@ -1,0 +1,20 @@
+---
+title: 画像コンポーネント
+description: Astroで画像を使用する方法について学びます。
+i18nReady: true
+---
+import Since from '~/components/Since.astro';
+import PackageManagerTabs from '~/components/tabs/PackageManagerTabs.astro';
+import RecipeLinks from "~/components/RecipeLinks.astro";
+import { Steps } from '@astrojs/starlight/components'
+import ReadMore from '~/components/ReadMore.astro';
+
+Astroでは、画像がプロジェクト内にローカルで保存されているか、外部URLからリンクされているか、CMSやCDN上で管理されているかに関係なく、サイト上で画像を扱うための複数の方法を提供しています。
+{/* fix */}
+Astroでは、組み込みの[`<Image />`](#image-)コンポーネントと[`<Picture />`](#picture-)コンポーネント、[Markdown画像構文](#images-in-markdown-files)（`![]（）`）の処理、[SVGコンポーネント](#svg-components)、および[画像生成関数](#generating-images-with-getimage)を使用して、画像の最適化や変換をおこなえます。また、デフォルトで[レスポンシブ画像の自動リサイズ](#responsive-image-behavior)を設定したり、個々のimageコンポーネントやpictureコンポーネントにレスポンシブプロパティを指定したりすることもできます。
+
+もちろん、標準的なHTMLを使用して`.astro`やMarkdownファイルに画像やSVGファイルを表示することも、ファイルの種類に応じた標準的な方法（MDXやJSXで`<img />`を使用するなど）で表示することも可能です。ただし、Astroはこれらの画像に対して処理や最適化を一切行いません。
+
+また、Astroにはネイティブな動画サポートがありません。そのため、最適化やストリーミングといった要件に対応するために[動画ホスティングサービス](/ja/guides/media/)を利用することをお勧めします。
+
+<ReadMore>[`<Image />`](/en/reference/modules/astro-assets/#image-)及び[`<Picture />`](/en/reference/modules/astro-assets/#picture-)コンポーネントの完全なAPIリファレンスを確認してください</ReadMore>
