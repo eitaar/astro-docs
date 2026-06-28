@@ -63,16 +63,48 @@ Astroのテンプレート言語では、[`<Image />`](/ja/reference/modules/ast
 import { Image } from 'astro:assets';
 import localBirdImage from '../../images/subfolder/localBirdImage.png';
 ---
-<Image src={localBirdImage} alt="A bird sitting on a nest of eggs." />
-<Image src="/images/bird-in-public-folder.jpg" alt="A bird." width="50" height="50" />
-<Image src="https://example.com/remote-bird.jpg" alt="A bird." width="50" height="50" />
+<Image src={localBirdImage} alt="鳥が巣で卵を温めている。" />
+<Image src="/images/bird-in-public-folder.jpg" alt="鳥。" width="50" height="50" />
+<Image src="https://example.com/remote-bird.jpg" alt="鳥。" width="50" height="50" />
 
-<img src={localBirdImage.src} alt="A bird sitting on a nest of eggs.">
-<img src="/images/bird-in-public-folder.jpg" alt="A bird.">
-<img src="https://example.com/remote-bird.jpg" alt="A bird.">
+<img src={localBirdImage.src} alt="鳥が巣で卵を温めている。">
+<img src="/images/bird-in-public-folder.jpg" alt="鳥。">
+<img src="https://example.com/remote-bird.jpg" alt="鳥。">
 ```
 
 <ReadMore>[`<Image />`](/ja/reference/modules/astro-assets/#image-)および[`<Picture />`](/ja/reference/modules/astro-assets/#picture-)コンポーネントのプロパティ（必須・オプション）については、完全なAPIリファレンスを確認してください。</ReadMore>
 
 <RecipeLinks slugs={["en/recipes/dynamically-importing-images" ]}/>
 
+## Markdownファイル内の画像
+
+<p>
+
+**オプション:** `![]()`, `<img>` (`public/`フォルダ内の画像かリモート画像の場合)
+</p>
+
+`.md`ファイルでは通常のMarkdown構文`![]()`を使用してください。画像が`src/`フォルダまたは承認されたリモートサーバーに保存されている場合、画像は自動的に変換および最適化されます。[レスポンシブ画像をグローバルに設定](/ja/reference/configuration-reference/#imagelayout)すればこれらの画像も[レスポンシブ](#responsive-image-behavior)対応になります。
+
+`public/`フォルダ内の画像は最適化されません。
+
+```md
+<!-- src/pages/post-1.md -->
+
+# 私のMarkdownページ
+
+<!-- src/assets/に保存されているローカル画像 -->
+<!-- 相対ファイルパスまたはインポートエイリアスを使用してください -->
+![満天の星空。](../assets/stars.png)
+
+<!-- public/images/に保存されているローカル画像 -->
+<!-- public/からの相対パスを使用してください -->
+![満天の星空。](/images/stars.png)
+
+<!-- 他のサーバーに保存されているリモート画像 -->
+<!-- 画像のフルURLを使用してください -->
+![Astro](https://example.com/images/remote-image.png)
+```
+
+HTMLの`<img>`タグを使用して、`public/`ディレクトリや外部に保存されている画像を、処理や最適化を行わずにページに表示させることもできます。ただし、`src/`内のローカル画像の表示には対応していません。
+
+また、`<Image />`および`<Picture />`コンポーネントは`.md`ファイルでは利用できません。画像の属性を細かく制御する必要がある場合は、[AstroのMDXインテグレーション](/ja/guides/integrations-guide/mdx/)を使用して、`.mdx`形式をサポートすることをおすすめします。MDXを使用すると、AstroコンポーネントとMarkdown構文を組み合わせるなど、[MDXで利用可能な追加の画像オプション](#images-in-mdx-files)が使えるようになります。
